@@ -6,4 +6,5 @@ Server.middleware.register([
 
 
 Server.middleware.registerNamed({
+	RegisterCheck : () => import('App/Middleware/RegisterCheck')
 })
