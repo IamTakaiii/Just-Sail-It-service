@@ -29,6 +29,5 @@ export default class UsersController {
 	}
 
 	// public async getUserById({ request, response }: HttpContextContract) {
-	// 	return ""
 	// }
 }
