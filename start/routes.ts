@@ -17,3 +17,9 @@ Route.group(() => {
 		.middleware(['ReqLogin'])
 })
 .prefix('/auth')
+
+Route.group(() => {
+	Route.put('/profile/:id', 'ImagesController.uploadProfileImg')
+})
+.prefix('/image')
+	.middleware(['AuthUpdateData', 'ReqUploadImg'])
