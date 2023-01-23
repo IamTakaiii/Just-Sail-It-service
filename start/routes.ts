@@ -6,6 +6,8 @@ Route.group(() => {
 	Route.get('/profile/:id', 'UsersController.getUserProfile')
 		.middleware(['AuthGetData'])
 	Route.patch('/profile/update/:id', 'UsersController.updateUserProfile')
+		.middleware(['AuthUpdateData', 'ReqUpdateProfile'])
+	Route.delete('/delete/:id', 'UsersController.delete')
 		.middleware(['AuthUpdateData'])
 })
 .prefix('/user')

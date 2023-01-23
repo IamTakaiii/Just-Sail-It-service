@@ -6,11 +6,13 @@ export default class TokenException extends Exception {
 	public async handle(error: this, { response }: HttpContextContract) {
 		switch (error.code) {
 			case INVALIDTOKEN:
-				response.status(401).send({ status: false, error:  'Unauthorize because invalid token'})
+				return response.status(401).send({ status: false, error:  'Unauthorize because invalid token'})
 			case INVALIDUPDATE:
-				response.status(401).send({ status: false, error: `You can't edit other user data` })
+				return response.status(401).send({ status: false, error: `You can't edit other user data` })
 			case TOKENEXPIRED:
-				response.status(401).send({ status: false, error: `You token expried` })
+				return response.status(401).send({ status: false, error: `You token expried` })
+			default:
+				return response.status(500).send({ status: false, error: `Unknown Token error` })
 		}
 	}
 }

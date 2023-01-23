@@ -28,16 +28,25 @@ export default class UsersController {
 
 	public async getUserProfile({ request, response }: HttpContextContract) {
 		const pubId = request.params().id
-		try {
-			const user = await User.findByOrFail('id', pubId)
-			response.send(user)
-		}
-		catch (err) {
-			console.log(err)
-		}
+		const user = await User.findByOrFail('id', pubId)
+		response.send(user)
 	}
 
 	public async updateUserProfile({ request, response }: HttpContextContract) {
-		response.send("bobob")
+		await User
+			.query()
+			.where('id', request.params().id)
+			.update(request.body())
+			.catch(err => { throw new DatabaseException('', 0, err.code)})
+		response.send({ status: true, error: null })
+	}
+
+	public async delete({ request, response }: HttpContextContract) {
+		await User
+			.query()
+			.where('id', request.params().id)
+			.delete()
+			.catch(err => { throw new DatabaseException('', 0, err.code) })
+		response.send({ status: true, error: null })
 	}
 }
