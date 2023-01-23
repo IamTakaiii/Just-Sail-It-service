@@ -40,4 +40,13 @@ export default class UsersController {
 			.catch(err => { throw new DatabaseException('', 0, err.code)})
 		response.send({ status: true, error: null })
 	}
+
+	public async delete({ request, response }: HttpContextContract) {
+		await User
+			.query()
+			.where('id', request.params().id)
+			.delete()
+			.catch(err => { throw new DatabaseException('', 0, err.code) })
+		response.send({ status: true, error: null })
+	}
 }
