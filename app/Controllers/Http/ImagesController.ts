@@ -15,7 +15,7 @@ export default class ImagesController {
 		const filename =  slugFilename+'.'+image?.extname
 		const fileStream = fs.createReadStream(image?.tmpPath! )
 		const user = await User.findByOrFail('id', userId)
-		await Drive.delete(user.user_img)
+		if (user.user_img) await Drive.delete(user.user_img)
 		await Drive.putStream(filename, fileStream, { contentType: image?.headers['content-type'] })
 		user.user_img = filename
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
