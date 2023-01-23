@@ -6,6 +6,8 @@ Server.middleware.register([
 
 
 Server.middleware.registerNamed({
-	RegisterCheck : () => import('App/Middleware/RegisterCheck'),
-	AuthCheck: () => import('App/Middleware/AuthCheck')
+	ReqRegister: () => import('App/Middleware/ReqRegister'),
+	ReqLogin: () => import('App/Middleware/ReqLogin'),
+	AuthGetData: () => import('App/Middleware/AuthGetData'),
+	AuthUpdateData: () => import('App/Middleware/AuthUpdateData'),
 })

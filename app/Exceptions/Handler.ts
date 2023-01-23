@@ -24,6 +24,10 @@ export default class ExceptionHandler extends HttpExceptionHandler {
 			return ctx.response.status(422).send({ status: false, error: customMsg })
 		}
 
+		if (error.code === 'E_ROW_NOT_FOUND') {
+			return ctx.response.status(404).send({ status: false, error: `Can't find your data in service database`})
+		}
+
 		return super.handle(error, ctx)
 	}
 
