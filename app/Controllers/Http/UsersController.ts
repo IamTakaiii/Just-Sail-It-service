@@ -3,6 +3,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import Token from 'App/Utils/Token'
 import DatabaseException from 'App/Exceptions/DatabaseException'
+import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class UsersController {
 	public async create({ request, response }: HttpContextContract) {
@@ -42,11 +43,10 @@ export default class UsersController {
 	}
 
 	public async delete({ request, response }: HttpContextContract) {
-		await User
-			.query()
-			.where('id', request.params().id)
-			.delete()
-			.catch(err => { throw new DatabaseException('', 0, err.code) })
+		const user = await User.findByOrFail('id', request.params().id)
+		if (user.user_img) await Drive.delete(user.user_img)
+		await user.delete()
+			.catch(err => { throw new DatabaseException('', 0, err.code)})
 		response.send({ status: true, error: null })
 	}
 }
