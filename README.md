@@ -3,13 +3,15 @@
 ## Installation
 
 1. Clone this repository
-2. ใช้คำสั่ง `yarn` เพื่อติดตั้ง depedencies
-3. สร้างไฟล์ `.env` สามารถก๊อปมาจาก `.env.example` 
-3. Run `yarn dev` 
+2. สั่ง `docker-compose up` เพื่อติดตั้ง PostgresDB & Local S3 Bucket (MinIo)
+3. ใช้คำสั่ง `yarn` เพื่อติดตั้ง depedencies
+4. สร้างไฟล์ `.env` สามารถก๊อปมาจาก `.env.example` 
+6. Run `yarn dev` 
 
 ## Usage
 เซิฟเวอร์ของระบบอยู่บน Port 3333 
-
+ดาต้าเบส Port 5432
+คอนโซลของ S3 Port 9001
 
 ## For Contributors
 
