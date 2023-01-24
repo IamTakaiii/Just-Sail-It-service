@@ -3,10 +3,18 @@
 ## Installation
 
 1. Clone this repository
-2. สั่ง `docker-compose up` เพื่อติดตั้ง PostgresDB & Local S3 Bucket (MinIo)
-3. ใช้คำสั่ง `yarn` เพื่อติดตั้ง depedencies
-4. สร้างไฟล์ `.env` สามารถก๊อปมาจาก `.env.example` 
+2. เข้าไปตั้ง username password ใน .`docker-coompose.yml` ทั้งของ database และ  Local S3 Bucket
+3. สั่ง `docker-compose up` เพื่อติดตั้ง PostgresDB & Local S3 Bucket (MinIo)
+4. เข้าไปที่ http://0.0.0.0:9001/access-keys กดสร้าง access key ก๊อป secret key และ access key เก็บไว้
+5. เข้าไปที่ http://0.0.0.0:9001/buckets กดสร้าง bucket
+5. สร้างไฟล์ `.env` สามารถก๊อปมาจาก `.env.example` แล้วแก้ไข ตรงพวกที่เกี่ยวกับ database และ S3
+5. ใช้คำสั่ง `yarn` เพื่อติดตั้ง depedencies
 6. Run `yarn dev` 
+
+## Post Install
+1. รันคำสั่ง `node ace migration:run` สำหรับสร้าง schema
+2. รันคำสั่ง `node ace seeder: run` สำหรับ generate ข้อมูลใน database เพื่อใช้ dev
+
 
 ## Usage
 - เซิฟเวอร์ของระบบอยู่บน Port 3333
