@@ -53,6 +53,7 @@ The following types are allowed:
 The scope types are:
 
 - `app`: changes to the app such as new config database
-- `account`: changes to the account module or account related components
+- `users`: changes to the user module or user related components
+- `auth`: changes to auth flow or auth related components
 
 
