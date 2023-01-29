@@ -24,11 +24,11 @@ export default class ImagesController {
 		if (user.user_img) await Drive.delete(user.user_img)
 		if (user.user_cover) await Drive.delete(user.user_cover)
 
-		await Drive.putStream(profile.getFileName(), profile.getFileStream(), { contentType: image?.headers['content-type'] })
-		await Drive.putStream(cover.getFileName(), cover.getFileStream(), { contentType: image?.headers['content-type'] })
+		await Drive.putStream(profile.fileName, profile.fileStream, { contentType: image?.headers['content-type'] })
+		await Drive.putStream(cover.fileName, cover.fileStream, { contentType: image?.headers['content-type'] })
 
-		user.user_img = profile.getFileName()
-		user.user_cover = cover.getFileName()
+		user.user_img = profile.fileName
+		user.user_cover = cover.fileName
 
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}

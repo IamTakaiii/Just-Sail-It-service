@@ -3,26 +3,25 @@ import fs from 'fs'
 
 class File {
 
-	private fileName: string
-	private fileStream: fs.ReadStream
+	private _fileName: string
+	private _fileStream: fs.ReadStream
 
 	public async genName (ext:string | undefined, mode?: string) : Promise<void> {
-		if (mode) this.fileName = `${ mode }_${ uuid() }.${ext}`
-		else this.fileName = `unknow_${uuid()}.${ext}`
+		if (mode) this._fileName = `${ mode }_${ uuid() }.${ext}`
+		else this._fileName = `unknown_${uuid()}.${ext}`
 	}
 
 	public async readStream(filePath: string | undefined): Promise<void>{
-		this.fileStream = fs.createReadStream(filePath ? filePath : '')
+		this._fileStream = fs.createReadStream(filePath ? filePath : '')
 	}
 
-	public getFileName():string {
-		return this.fileName
+	get fileName(): string {
+		return this._fileName;
 	}
 
-	public getFileStream(): fs.ReadStream{
-		return this.fileStream
+	get fileStream(): fs.ReadStream {
+		return this._fileStream;
 	}
-
 }
 
 export default File
