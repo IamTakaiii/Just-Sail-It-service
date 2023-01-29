@@ -20,6 +20,7 @@ export default class extends BaseSchema {
 			table.string('portfolio', 512)
 			table.string('website', 512)
 			table.text('user_img')
+			table.text('user_cover')
 			table.text('about_me')
 			table.specificType('educations', 'JSON[]')
 			table.specificType('skills', 'TEXT[]')
