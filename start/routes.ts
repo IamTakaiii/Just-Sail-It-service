@@ -15,6 +15,8 @@ Route.group(() => {
 Route.group(() => {
 	Route.post('/login', 'AuthController.login')
 		.middleware(['ReqLogin'])
+	Route.get('/check/token', 'AuthController.checkToken')
+		.middleware(['AuthGetData'])
 })
 .prefix('/auth')
 
@@ -23,3 +25,4 @@ Route.group(() => {
 })
 .prefix('/image')
 	.middleware(['AuthUpdateData', 'ReqUploadImg'])
+
