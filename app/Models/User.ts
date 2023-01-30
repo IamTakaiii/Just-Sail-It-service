@@ -27,6 +27,9 @@ export default class User extends BaseModel {
 	public user_img: string
 
 	@column()
+	public user_cover: string
+
+	@column()
 	public about_me: string
 
 	@column()

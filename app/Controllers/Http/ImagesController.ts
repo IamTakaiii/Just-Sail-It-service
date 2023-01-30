@@ -1,23 +1,35 @@
-import { v4 as uuid } from 'uuid'
-import fs from 'fs'
-
 import Drive from '@ioc:Adonis/Core/Drive'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import DatabaseException from 'App/Exceptions/DatabaseException'
+import File from 'App/Utils/Files'
 
 export default class ImagesController {
 
 	public async uploadProfileImg ({ request }: HttpContextContract) {
+		const cover_image = request.file('cover_image')
 		const image = request.file('profile_image')
 		const userId = request.params().id
-		const slugFilename = 'profile_' + uuid()
-		const filename =  slugFilename+'.'+image?.extname
-		const fileStream = fs.createReadStream(image?.tmpPath! )
+
+		const profile = new File()
+		await profile.genName(image?.extname, 'profile')
+		await profile.readStream(image?.tmpPath)
+
+		const cover = new File()
+		await cover.genName(cover_image?.extname, 'cover_profile')
+		await cover.readStream(cover_image?.tmpPath)
+
 		const user = await User.findByOrFail('id', userId)
+
 		if (user.user_img) await Drive.delete(user.user_img)
-		await Drive.putStream(filename, fileStream, { contentType: image?.headers['content-type'] })
-		user.user_img = filename
+		if (user.user_cover) await Drive.delete(user.user_cover)
+
+		await Drive.putStream(profile.fileName, profile.fileStream, { contentType: image?.headers['content-type'] })
+		await Drive.putStream(cover.fileName, cover.fileStream, { contentType: image?.headers['content-type'] })
+
+		user.user_img = profile.fileName
+		user.user_cover = cover.fileName
+
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}
 

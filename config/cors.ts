@@ -1,8 +1,8 @@
 import type { CorsConfig } from '@ioc:Adonis/Core/Cors'
 const corsConfig: CorsConfig = {
-	enabled: false,
-	origin: true,
-	methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],
+	enabled: true,
+	origin: '*',
+	methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH'],
 	headers: true,
 	exposeHeaders: [
 		'cache-control',

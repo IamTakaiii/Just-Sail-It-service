@@ -5,6 +5,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 import Token from 'App/Utils/Token'
 import SignatureException from 'App/Exceptions/SignatureException';
+import User from 'App/Models/User';
 export default class AuthController {
 	public async login({ request, response }:HttpContextContract) {
 		try {
@@ -26,4 +27,13 @@ export default class AuthController {
 			throw new SignatureException(err.message)
 		}
 	}
+
+	public async checkToken({ request, response }: HttpContextContract) {
+		const token = request.headers().authorization?.split(" ")[1]
+		const decoded = await Token.decodeToken(token ? token : "")
+		const user = await User.findByOrFail('email', decoded.email)
+		const payload = { userId: user.id, username: user.username, image: user.user_img }
+		response.send({ status: true, error: null, payload: payload })
+	}
+
 }
