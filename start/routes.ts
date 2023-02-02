@@ -21,7 +21,8 @@ Route.group(() => {
 
 Route.group(() => {
 	Route.put('/profile/:id', 'ImagesController.uploadProfileImg')
+		.middleware(['ReqUploadProfileImg'])
 })
 .prefix('/image')
-	.middleware(['AuthUpdateData', 'ReqUploadImg'])
+	.middleware(['AuthUpdateData'])
 
