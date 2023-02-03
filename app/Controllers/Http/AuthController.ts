@@ -32,7 +32,7 @@ export default class AuthController {
 		const token = request.headers().authorization?.split(" ")[1]
 		const decoded = await Token.decodeToken(token ? token : "")
 		const user = await User.findByOrFail('email', decoded.email)
-		const payload = { userId: user.id, username: user.username, image: user.user_img }
+		const payload = { userId: user.id, username: user.username, image: user.user_img, image_cover: user.user_cover }
 		response.send({ status: true, error: null, payload: payload })
 	}
 
