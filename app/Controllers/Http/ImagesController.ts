@@ -27,8 +27,8 @@ export default class ImagesController {
 		await Drive.putStream(profile.fileName, profile.fileStream, { contentType: image?.headers['content-type'] })
 		await Drive.putStream(cover.fileName, cover.fileStream, { contentType: image?.headers['content-type'] })
 
-		user.user_img = `${process.env.S3_SHOW_ENDPOINT}/${process.env.S3_BUCKET}/${profile.fileName}`
-		user.user_cover = `${process.env.S3_SHOW_ENDPOINT}/${process.env.S3_BUCKET}/${cover.fileName}`
+		user.user_img = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${profile.fileName}`
+		user.user_cover = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${cover.fileName}`
 
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}
