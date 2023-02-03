@@ -13,7 +13,9 @@ export default class UsersController {
 				username: username,
 				id: pubId,
 				email: email,
-				nounce: Math.floor(Math.random() * 99999999).toString()
+				nounce: Math.floor(Math.random() * 99999999).toString(),
+				user_img: `${process.env.RAND_USER_IMG}/seed=${Math.random()}`,
+				user_cover: `${process.env.RAND_USER_COVER}`
 			})
 			const token = await Token.createToken(email, pubId)
 			response.send({
@@ -30,7 +32,7 @@ export default class UsersController {
 	public async getUserProfile({ request, response }: HttpContextContract) {
 		const pubId = request.params().id
 		const user = await User.findByOrFail('id', pubId)
-		response.send({ ...user.$attributes , user_img: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${user.user_img}` })
+		response.send({ ...user.$attributes })
 	}
 
 	public async updateUserProfile({ request, response }: HttpContextContract) {
