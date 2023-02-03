@@ -25,6 +25,7 @@ export default class UsersController {
 			})
 		}
 		catch (err) {
+			console.log(err)
 			throw new DatabaseException('', 0, err.code)
 		}
 	}
