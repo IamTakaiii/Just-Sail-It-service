@@ -52,4 +52,29 @@ export default class ProjectsController {
 		response.send({ status: true, error: null, payload: project })
 	}
 
+	public async getById ({ request, response }: HttpContextContract) {
+		const project = await Project.findByOrFail('id', request.params().id)
+		response.send({ status: true, error: null, payload: project })
+	}
+
+	public async getByUserId ({ request, response }: HttpContextContract) {
+		const { page, limit } = request.qs()
+		const userId = request.params().id
+		const projects = await Project
+			.query()
+			.where('user_id', '=', userId)
+			.paginate(page ? page : 1, limit ? limit : 20)
+			.catch(err => { throw new DatabaseException('', 0, err.code) })
+		response.send({ status: true, error: null, payload: projects })
+	}
+
+	public async getAllProject ({ request, response }: HttpContextContract) {
+		const { page, limit } = request.qs()
+		const projects = await Project
+			.query()
+			.where('status', '=', 'funding')
+			.paginate(page ? page : 1, limit ? limit : 20)
+			.catch(err => { throw new DatabaseException('', 0, err.code) })
+		response.send({ status: true, error: null, payload: projects })
+	}
  }

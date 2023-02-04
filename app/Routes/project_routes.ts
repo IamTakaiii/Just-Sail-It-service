@@ -14,6 +14,12 @@ const route = Route.group(() => {
 			'ValidateUpdateProject'
 		])
 
+	Route.get('/all', 'ProjectsController.getAllProject')
+
+	Route.get('/user/:id', 'ProjectsController.getByUserId')
+
+	Route.get('/:id', 'ProjectsController.getById')
+
 })
 	.prefix('/project')
 
