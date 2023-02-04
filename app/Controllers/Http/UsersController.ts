@@ -5,7 +5,6 @@ import User from 'App/Models/User'
 import Token from 'App/Utils/TokenUtil'
 import UserUtil from 'App/Utils/UserUtil'
 import DatabaseException from 'App/Exceptions/DatabaseException'
-import { DB_E } from 'App/Constants/ErrorCode'
 
 export default class UsersController {
 
@@ -13,7 +12,7 @@ export default class UsersController {
 		const { pubId, username, email } = request.body()
 		const payload = await UserUtil.createObject(username, pubId, email)
 		const user = await User.create(payload)
-			.catch(err => { throw new DatabaseException('', 0, DB_E.DUPLICATE) })
+			.catch(err => { throw new DatabaseException('', 0, err.code) })
 		const token = await Token.createToken(email, pubId)
 		response.send({ status: user.$isPersisted, error: null, payload: token })
 	}

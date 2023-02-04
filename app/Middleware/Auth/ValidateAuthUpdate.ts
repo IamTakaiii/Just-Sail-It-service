@@ -15,12 +15,12 @@ export default class ValidateAuthUpdate {
 		if (path.includes(`/profile`)) {
 			const user = await User.findByOrFail('id', token.payload.pubId)
 			if (user.id === token.payload.pubId) await next()
-			else throw new AuthException('invalid token', 400, AUTH_E.INVALID)
+			else throw new AuthException('', 0, AUTH_E.UNAUTHORIZE_UPDATE)
 		}
 		else if (path.includes(`/project`)) {
 			const project = await Project.findByOrFail('id', id)
 			if (project.user_id === token.payload.pubId) await next()
-			else throw new AuthException('invalid token', 400, AUTH_E.INVALID)
+			else throw new AuthException('', 0, AUTH_E.UNAUTHORIZE_UPDATE)
 		}
 		else {
 			await next()

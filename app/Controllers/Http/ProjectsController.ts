@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Event from '@ioc:Adonis/Core/Event'
+import Drive from '@ioc:Adonis/Core/Drive'
 
 import Token from 'App/Utils/TokenUtil'
 import Timer from 'App/Utils/TimerUtil'
@@ -9,13 +10,14 @@ import ProjectUtil from 'App/Utils/ProjectUtil'
 import { SERVER_MSG } from 'App/Constants/ErrorMessage'
 import { EVENTDB } from 'App/Constants/EventCode'
 import DatabaseException from 'App/Exceptions/DatabaseException'
+import ImageUtil from 'App/Utils/ImageUtil'
 
 export default class ProjectsController {
 
-	protected signal: boolean = false
+	protected signal: boolean = true
 
 	public async create ({ request, response  }: HttpContextContract) {
-		const sleep = Timer.sleep(10000)
+		const sleep = Timer.sleep(1000)
 		const token = await Token.verifyToken(Token.extractToken(request.headers().authorization))
 
 		Event.on(EVENTDB.SAVE_PROJECT, async (str: string) => {
@@ -77,4 +79,20 @@ export default class ProjectsController {
 			.catch(err => { throw new DatabaseException('', 0, err.code) })
 		response.send({ status: true, error: null, payload: projects })
 	}
+
+	public async delete ({ request, response }: HttpContextContract) {
+		const project = await Project.findByOrFail('id', request.params().id)
+		const contentImages = project.content_image
+		const imgUtil = new ImageUtil()
+		if (contentImages) {
+			contentImages.map(async image => {
+				let name = image.replace(imgUtil.host+'/' , "")
+				await Drive.delete(name).catch(err => console.log(err))
+			})
+		}
+		await project.delete()
+			.catch(err => { throw new DatabaseException('', 0, err.code) })
+		response.send({ status: true, error: null, payload: null })
+	}
+
  }

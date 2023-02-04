@@ -20,6 +20,11 @@ const route = Route.group(() => {
 
 	Route.get('/:id', 'ProjectsController.getById')
 
+	Route.delete('/:id', 'ProjectsController.delete')
+		.middleware([
+			'ValidateAuth',
+			'ValidateAuthUpdate',
+		])
 })
 	.prefix('/project')
 

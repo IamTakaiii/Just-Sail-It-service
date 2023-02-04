@@ -33,7 +33,7 @@ export default class AuthController {
 	public async token({ request, response }: HttpContextContract) {
 		const token = await Token.verifyToken(Token.extractToken(request.headers().authorization))
 		const user = await User.findByOrFail('email', token.payload.email)
-		const payload = { userId: user.id, username: user.username, image: user.user_img }
+		const payload = { userId: user.id, username: user.username, image: user.user_img}
 		response.send({ status: true, error: null, payload: payload })
 	}
  }
