@@ -1,36 +1,55 @@
-import Drive from '@ioc:Adonis/Core/Drive'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Drive from '@ioc:Adonis/Core/Drive'
+
 import User from 'App/Models/User'
+import ImageUtil from 'App/Utils/ImageUtil'
 import DatabaseException from 'App/Exceptions/DatabaseException'
-import File from 'App/Utils/Files'
+import Project from 'App/Models/Project'
 
 export default class ImagesController {
-
-	public async uploadProfileImg ({ request }: HttpContextContract) {
+	public async profile ({ request }: HttpContextContract) {
+		const profile_image = request.file('profile_image')
 		const cover_image = request.file('cover_image')
-		const image = request.file('profile_image')
 		const userId = request.params().id
 
-		const profile = new File()
-		await profile.genName(image?.extname, 'profile')
-		await profile.readStream(image?.tmpPath)
+		const profile = new ImageUtil()
+		await profile.genName(profile_image?.extname, 'profile')
+		await profile.genStream(profile_image?.tmpPath)
 
-		const cover = new File()
-		await cover.genName(cover_image?.extname, 'cover_profile')
-		await cover.readStream(cover_image?.tmpPath)
+		const cover = new ImageUtil()
+		await cover.genName(cover_image?.extname, 'cover')
+		await cover.genStream(cover_image?.tmpPath)
 
 		const user = await User.findByOrFail('id', userId)
 
 		if (user.user_img) await Drive.delete(user.user_img)
 		if (user.user_cover) await Drive.delete(user.user_cover)
 
-		await Drive.putStream(profile.fileName, profile.fileStream, { contentType: image?.headers['content-type'] })
-		await Drive.putStream(cover.fileName, cover.fileStream, { contentType: image?.headers['content-type'] })
+		await Drive.putStream(profile.name, profile.stream, { contentType: profile_image?.headers['content-type'] })
+		await Drive.putStream(cover.name, cover.stream, { contentType: cover_image?.headers['content-type'] })
 
-		user.user_img = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${profile.fileName}`
-		user.user_cover = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${cover.fileName}`
+		user.user_img = profile.host.concat(profile.name)
+		user.user_cover = cover.host.concat(cover.name)
 
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}
 
+	public async project({ request }: HttpContextContract) {
+		const images = request.files('content_images')
+		const projectId = request.params().id
+		const project = await Project.findByOrFail('id', projectId)
+		const projectImages = new ImageUtil()
+
+		await projectImages.genArrayOfName(images, "project")
+		await projectImages.genArrayOfStream(images)
+
+		images.map(async(i, index) => {
+			await Drive.putStream(projectImages.arrName[index], projectImages.arrStream[index], { contentType: i?.headers['content-type'] })
+			.catch(err => console.log(err))
+		})
+
+		project.content_image = projectImages.arrUrl
+
+		await project.save().catch(err => { throw new DatabaseException('have error in save project image process ', 500, err.code) })
+	}
 }

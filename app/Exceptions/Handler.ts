@@ -13,22 +13,20 @@ export default class ExceptionHandler extends HttpExceptionHandler {
 		super(Logger)
 	}
 
+	// Global Handler when use validator schema
 	public async handle(error: any, ctx: HttpContextContract): Promise<any> {
-
-		if (error.status === 400) {
-			return ctx.response.status(400).send({ status: false, error: error.message })
-		}
 
 		if (error.code === 'E_VALIDATION_FAILURE') {
 			const customMsg = error.messages.errors.map((i) => i.message)
-			return ctx.response.status(422).send({ status: false, error: customMsg })
+			console.log(error)
+			return ctx.response.status(422).send({ status: false, error: customMsg, payload: null })
 		}
 
 		if (error.code === 'E_ROW_NOT_FOUND') {
-			return ctx.response.status(404).send({ status: false, error: `Can't find your data in service database`})
+			console.log(error)
+			return ctx.response.status(404).send({ status: false, error: `Can't find your data in service database`, payload: error })
 		}
 
 		return super.handle(error, ctx)
 	}
-
 }

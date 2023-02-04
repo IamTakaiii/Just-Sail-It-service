@@ -1,7 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+
+import Project from 'App/Models/Project'
 
 export default class User extends BaseModel {
+
+	@hasMany(() => Project)
+	public projects: HasMany<typeof Project>
+
 	@column({ isPrimary: true })
 	public id: string
 
