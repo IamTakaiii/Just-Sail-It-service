@@ -28,8 +28,8 @@ export default class ImagesController {
 		await Drive.putStream(profile.name, profile.stream, { contentType: profile_image?.headers['content-type'] })
 		await Drive.putStream(cover.name, cover.stream, { contentType: cover_image?.headers['content-type'] })
 
-		user.user_img = profile.name
-		user.user_cover = cover.name
+		user.user_img = `${profile.host}/${profile.name}`
+		user.user_cover = `${cover.host}/${cover.name}`
 
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}
@@ -48,7 +48,7 @@ export default class ImagesController {
 			.catch(err => console.log(err))
 		})
 
-		project.content_image = projectImages.arrName
+		project.content_image = projectImages.arrUrl
 
 		await project.save().catch(err => { throw new DatabaseException('have error in save project image process ', 500, err.code) })
 	}
