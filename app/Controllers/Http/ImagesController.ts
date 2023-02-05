@@ -52,4 +52,21 @@ export default class ImagesController {
 
 		await project.save().catch(err => { throw new DatabaseException('have error in save project image process ', 500, err.code) })
 	}
+
+	public async projectCover ({ request }: HttpContextContract)  {
+		const id = request.params().id
+		const image = request.file('project_cover')
+		const imageUtil = new ImageUtil()
+		const project = await Project.findByOrFail('id', id)
+
+		await imageUtil.genName(image?.extname, 'project_cover')
+		await imageUtil.genStream(image?.tmpPath)
+
+		await Drive.putStream(imageUtil.name, imageUtil.stream, { contentType: image?.headers['content-type'] })
+
+		project.project_image = `${ imageUtil.host }/${imageUtil.name}`
+
+		await project.save().catch(err => { throw new DatabaseException('have error in save project image process ', 500, err.code) })
+	}
+
 }

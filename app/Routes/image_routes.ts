@@ -4,6 +4,8 @@ const route = Route.group(() => {
 
 	Route.put('/profile/:id', 'ImagesController.profile')
 
+	Route.put('/project/cover/:id', 'ImagesController.projectCover')
+
 	Route.put('/project/:id', 'ImagesController.project')
 
 })

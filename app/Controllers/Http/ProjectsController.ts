@@ -83,11 +83,16 @@ export default class ProjectsController {
 	public async delete ({ request, response }: HttpContextContract) {
 		const project = await Project.findByOrFail('id', request.params().id)
 		const contentImages = project.content_image
+		const projectCover = project.project_image
 		if (contentImages) {
 			contentImages.map(async image => {
 				let name = image.substring(image.lastIndexOf('/'), image.length)
 				await Drive.delete(name).catch(err => console.log(err))
 			})
+		}
+		if (projectCover) {
+			let name = projectCover.substring(projectCover.lastIndexOf('/'), projectCover.length)
+			await Drive.delete(name).catch(err => console.log(err))
 		}
 		await project.delete()
 			.catch(err => { throw new DatabaseException('', 0, err.code) })
