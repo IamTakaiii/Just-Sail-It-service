@@ -10,26 +10,23 @@ export default class ImagesController {
 		const cover_image = request.file('cover_image')
 		const image = request.file('profile_image')
 		const userId = request.params().id
-
-		const profile = new File()
-		await profile.genName(image?.extname, 'profile')
-		await profile.readStream(image?.tmpPath)
-
-		const cover = new File()
-		await cover.genName(cover_image?.extname, 'cover_profile')
-		await cover.readStream(cover_image?.tmpPath)
-
 		const user = await User.findByOrFail('id', userId)
-
-		if (user.user_img) await Drive.delete(user.user_img)
-		if (user.user_cover) await Drive.delete(user.user_cover)
-
-		await Drive.putStream(profile.fileName, profile.fileStream, { contentType: image?.headers['content-type'] })
-		await Drive.putStream(cover.fileName, cover.fileStream, { contentType: image?.headers['content-type'] })
-
-		user.user_img = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${profile.fileName}`
-		user.user_cover = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${cover.fileName}`
-
+		if (image) {
+			const profile = new File()
+			await profile.genName(image?.extname, 'profile')
+			await profile.readStream(image?.tmpPath)
+			if (user.user_img) await Drive.delete(user.user_img)
+			await Drive.putStream(profile.fileName, profile.fileStream, { contentType: image?.headers['content-type'] })
+			user.user_img = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${profile.fileName}`
+		}
+		if (cover_image) {
+			const cover = new File()
+			await cover.genName(cover_image?.extname, 'cover_profile')
+			await cover.readStream(cover_image?.tmpPath)
+			if (user.user_cover) await Drive.delete(user.user_cover)
+			await Drive.putStream(cover.fileName, cover.fileStream, { contentType: image?.headers['content-type'] })
+			user.user_cover = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${cover.fileName}`
+		}
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}
 
