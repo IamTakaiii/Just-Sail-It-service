@@ -11,26 +11,23 @@ export default class ImagesController {
 		const profile_image = request.file('profile_image')
 		const cover_image = request.file('cover_image')
 		const userId = request.params().id
-
-		const profile = new ImageUtil()
-		await profile.genName(profile_image?.extname, 'profile')
-		await profile.genStream(profile_image?.tmpPath)
-
-		const cover = new ImageUtil()
-		await cover.genName(cover_image?.extname, 'cover')
-		await cover.genStream(cover_image?.tmpPath)
-
 		const user = await User.findByOrFail('id', userId)
-
-		if (user.user_img) await Drive.delete(user.user_img)
-		if (user.user_cover) await Drive.delete(user.user_cover)
-
-		await Drive.putStream(profile.name, profile.stream, { contentType: profile_image?.headers['content-type'] })
-		await Drive.putStream(cover.name, cover.stream, { contentType: cover_image?.headers['content-type'] })
-
-		user.user_img = `${profile.host}/${profile.name}`
-		user.user_cover = `${cover.host}/${cover.name}`
-
+		if (profile_image) {
+			const profile = new ImageUtil()
+			await profile.genName(profile_image?.extname, 'profile')
+			await profile.genStream(profile_image?.tmpPath)
+			if (user.user_img) await Drive.delete(user.user_img)
+			await Drive.putStream(profile.name, profile.stream, { contentType: profile_image?.headers['content-type'] })
+			user.user_img = `${profile.host}/${profile.name}`
+		}
+		if (cover_image) {
+			const cover = new ImageUtil()
+			await cover.genName(cover_image?.extname, 'cover')
+			await cover.genStream(cover_image?.tmpPath)
+			if (user.user_cover) await Drive.delete(user.user_cover)
+			await Drive.putStream(cover.name, cover.stream, { contentType: cover_image?.headers['content-type'] })
+			user.user_cover = `${cover.host}/${cover.name}`
+		}
 		await user.save().catch(err => { throw new DatabaseException('', 0, err.code) })
 	}
 
