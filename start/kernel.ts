@@ -4,12 +4,13 @@ Server.middleware.register([
 	() => import('@ioc:Adonis/Core/BodyParser'),
 ])
 
-
 Server.middleware.registerNamed({
-	ReqRegister: () => import('App/Middleware/ReqRegister'),
-	ReqLogin: () => import('App/Middleware/ReqLogin'),
-	ReqUpdateProfile: () => import('App/Middleware/ReqUpdateProfile'),
-	ReqUploadProfileImg: () => import('App/Middleware/ReqUploadProfileImg') ,
-	AuthGetData: () => import('App/Middleware/AuthGetData'),
-	AuthUpdateData: () => import('App/Middleware/AuthUpdateData'),
+	ValidateAuth: () => import('App/Middleware/Auth/ValidateAuth'),
+	ValidateAuthUpdate: () => import('App/Middleware/Auth/ValidateAuthUpdate'),
+	ValidateAuthUserUpdate: () => import('App/Middleware/Auth/ValidateAuthUserUpdate'),
+	ValidateRegister: () => import('App/Middleware/User/ValidateRegister'),
+	ValidateUpdateUser: () => import('App/Middleware/User/ValidateUpdateUser'),
+	ValidateLogin: () => import('App/Middleware/Auth/ValidateLogin'),
+	ValidateCreateProject: () => import('App/Middleware/Project/ValidateCreateProject'),
+	ValidateUpdateProject: () =>import('App/Middleware/Project/ValidateUpdateProject')
 })
