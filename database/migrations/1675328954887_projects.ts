@@ -42,6 +42,9 @@ export default class extends BaseSchema {
 				.defaultTo('funding')
 				.notNullable()
 
+			table.integer('truth_score')
+				.defaultTo(10)
+
 			table.decimal('total_raised', 27, 18)
 				.defaultTo(0)
 				.notNullable()
