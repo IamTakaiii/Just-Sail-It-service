@@ -83,6 +83,9 @@ export default class Project extends BaseModel {
 	@column()
 	public truth_score: number
 
+	@column()
+	public smart_contract_id: string
+
 	@column.dateTime({ autoCreate: true })
 	public createdAt: DateTime
 

@@ -70,6 +70,9 @@ export default class extends BaseSchema {
 
 			table.specificType('content_image', 'TEXT[]')
 
+			table.string('smart_contract_id')
+				.notNullable()
+
 			table.timestamp('created_at', { useTz: true })
 			table.timestamp('updated_at', { useTz: true })
 		})

@@ -1,21 +1,49 @@
 import Drive from '@ioc:Adonis/Core/Drive';
+import Event from '@ioc:Adonis/Core/Event'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 import { E_CODE } from 'App/Constants/Error'
+import { EVENTDB } from 'App/Constants/EventCode';
 import DatabaseException from 'App/Exceptions/DatabaseException'
 import ProjectHelper from 'App/Helper/ProjectHelper'
 import Result from 'App/Helper/ResponseHelper'
+import Timer from 'App/Helper/TimerHelper';
 import Project from 'App/Models/Project'
 
 export default class ProjectsController {
 
-	protected signal: boolean = true
+	protected signal: boolean = false
 
 	public async create ({ request, response, logger }: HttpContextContract) {
 		const decoded = request.body().token
 		const info = request.original()
+		const sleep = Timer.sleep(10000)
+		let smart_contract_id = ""
+
+		Event.on(EVENTDB.SAVE_PROJECT, async (message: string) => {
+			const msgObject = JSON.parse(message)
+			if (msgObject) {
+				console.log(msgObject)
+				smart_contract_id = msgObject.id.hex
+				setTimeout(() => { sleep.cancel() }, 100)
+				this.signal = true
+			}
+			else {
+				setTimeout(() => { sleep.cancel() }, 1000)
+			}
+			// if (str === request.body().name) {
+			// 	setTimeout(() => { sleep.cancel() }, 100)
+			// 	this.signal = true
+			// }
+			// else {
+			// 	setTimeout(() => { sleep.cancel() }, 1000)
+			// }
+		})
+
+		await sleep
+
 		if (this.signal) {
-			const project = await Project.create({ ...info, user_id: decoded.payload.pubId })
+			const project = await Project.create({ ...info, user_id: decoded.payload.pubId, smart_contract_id })
 				.catch(err => {
 					logger.error(err)
 					throw new DatabaseException(err.code, 500, E_CODE.PROJECT)
