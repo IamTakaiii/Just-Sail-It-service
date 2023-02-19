@@ -79,37 +79,44 @@ export default class ProjectsController {
 
 	public async getById({ request, response }: HttpContextContract) {
 		const projectId = request.params().id
-		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
 		const project = await Project.findByOrFail('id', projectId)
-			.catch(err => { throw new DatabaseException(err.code, 500, E_CODE.PROJECT) })
+		.catch(err => { throw new DatabaseException(err.code, 500, E_CODE.PROJECT) })
+
+		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
 		project.content_image = project.content_image.map(i => {
 			return File.attechHost(host, i, 'content_image')
 		})
 		project.project_image = File.attechHost(host, project.project_image, 'project_image')
+
 		response.send(Result.success(project))
 	}
 
 	public async getByUserId({ request, response }: HttpContextContract) {
 		const userId = request.params().id
-		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
+
 		const allProject = await Project
-			.query()
-			.select('*')
-			.from('projects')
-			.where('user_id', '=', userId)
-			.catch(err => { throw new DatabaseException(err.code, 500, E_CODE.PROJECT) })
+		.query()
+		.select('*')
+		.from('projects')
+		.where('user_id', '=', userId)
+		.catch(err => { throw new DatabaseException(err.code, 500, E_CODE.PROJECT) })
+
+		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
 		allProject.map(i => {
 			i.project_image = File.attechHost(host, i.project_image, 'project_image')
 		})
+
 		response.send(Result.success(allProject))
 	}
 
 	public async all({ request, response }: HttpContextContract) {
 		const allProject = await ProjectHelper.gettAllByQS(request.qs())
+
 		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
 		allProject.map(i => {
 			i.project_image = File.attechHost(host, i.project_image, 'project_image')
 		})
+
 		response.send(Result.success(allProject))
 	}
 
