@@ -29,7 +29,7 @@ class File {
 	}
 
 	public static attechHost ( host: string | undefined, fileName: string, useFor:string ) {
-		const name = fileName.slice(0, fileName.lastIndexOf("/"))
+		const name = fileName ? fileName.slice(0, fileName.lastIndexOf("/")) : ""
 		if (!host) throw new Error()
 		if (name.includes(useFor)) {
 			return `${host}/${fileName}`

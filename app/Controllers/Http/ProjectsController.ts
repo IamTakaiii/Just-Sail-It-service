@@ -9,12 +9,14 @@ import ProjectHelper from 'App/Helper/ProjectHelper'
 import Result from 'App/Helper/ResponseHelper'
 import Timer from 'App/Helper/TimerHelper';
 import Project from 'App/Models/Project'
+import File from 'App/Helper/FileHelper';
+
 
 export default class ProjectsController {
 
 	protected signal: boolean = false
 
-	public async create ({ request, response, logger }: HttpContextContract) {
+	public async create({ request, response, logger }: HttpContextContract) {
 		const decoded = request.body().token
 		const info = request.original()
 		const sleep = Timer.sleep(10000)
@@ -31,13 +33,6 @@ export default class ProjectsController {
 			else {
 				setTimeout(() => { sleep.cancel() }, 1000)
 			}
-			// if (str === request.body().name) {
-			// 	setTimeout(() => { sleep.cancel() }, 100)
-			// 	this.signal = true
-			// }
-			// else {
-			// 	setTimeout(() => { sleep.cancel() }, 1000)
-			// }
 		})
 
 		await sleep
@@ -53,7 +48,7 @@ export default class ProjectsController {
 		else response.status(500).send(Result.fail("Create timeout", {}))
 	}
 
-	public async update ({ request, response }: HttpContextContract) {
+	public async update({ request, response }: HttpContextContract) {
 		const decoded = request.body().token
 		const info = request.original()
 		const project = await ProjectHelper.checkProjectOwner(info.id, decoded.payload.pubId)
@@ -64,7 +59,7 @@ export default class ProjectsController {
 		response.send(Result.success(project))
 	}
 
-	public async delete ({ request, response }: HttpContextContract) {
+	public async delete({ request, response }: HttpContextContract) {
 		const projectId = request.params().id
 		const decoded = request.body().token
 		const project = await ProjectHelper.checkProjectOwner(projectId, decoded.payload.pubId)
@@ -82,26 +77,39 @@ export default class ProjectsController {
 		response.send(Result.success())
 	}
 
-	public async getById ({ request, response }: HttpContextContract) {
+	public async getById({ request, response }: HttpContextContract) {
 		const projectId = request.params().id
+		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
 		const project = await Project.findByOrFail('id', projectId)
-			.catch(err =>  { throw new DatabaseException(err.code, 500, E_CODE.PROJECT)})
+			.catch(err => { throw new DatabaseException(err.code, 500, E_CODE.PROJECT) })
+		project.content_image = project.content_image.map(i => {
+			return File.attechHost(host, i, 'content_image')
+		})
+		project.project_image = File.attechHost(host, project.project_image, 'project_image')
 		response.send(Result.success(project))
 	}
 
 	public async getByUserId({ request, response }: HttpContextContract) {
 		const userId = request.params().id
+		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
 		const allProject = await Project
 			.query()
 			.select('*')
 			.from('projects')
 			.where('user_id', '=', userId)
 			.catch(err => { throw new DatabaseException(err.code, 500, E_CODE.PROJECT) })
+		allProject.map(i => {
+			i.project_image = File.attechHost(host, i.project_image, 'project_image')
+		})
 		response.send(Result.success(allProject))
 	}
 
 	public async all({ request, response }: HttpContextContract) {
 		const allProject = await ProjectHelper.gettAllByQS(request.qs())
+		const host = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`
+		allProject.map(i => {
+			i.project_image = File.attechHost(host, i.project_image, 'project_image')
+		})
 		response.send(Result.success(allProject))
 	}
 

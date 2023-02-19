@@ -58,7 +58,7 @@ export default class FilesController {
 		const files = await File.makes(images, 'content_image')
 			.then(result => Promise.all(result))
 
-		files.forEach(async image => await Drive.putStream(image.name, image.stream))
+		files.forEach(async image => await Drive.putStream(image.name, image.stream, { contentType: images[0]?.headers['content-type'] }))
 
 		let  fileNames = files.map(i => i.name)
 		project.content_image = project.content_image ?  project.content_image : []
