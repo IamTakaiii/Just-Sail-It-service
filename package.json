@@ -46,6 +46,7 @@
 		"@ethereumjs/util": "^8.0.3",
 		"@metamask/eth-sig-util": "^5.0.2",
 		"@types/jsdom": "^20.0.1",
+		"adonis5-scheduler": "^2.0.2",
 		"dompurify": "^2.4.3",
 		"jsdom": "^21.1.0",
 		"jsonwebtoken": "^9.0.0",
