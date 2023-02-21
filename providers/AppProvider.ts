@@ -8,8 +8,8 @@ export default class AppProvider {
 	}
 
 	public async boot() {
-		const scheduler = this.app.container.use('Adonis/Addons/Scheduler')
-		scheduler.run()
+		// const scheduler = this.app.container.use('Adonis/Addons/Scheduler')
+		// scheduler.run()
 	}
 
 	public async ready() {
